@@ -1,0 +1,26 @@
+mongo
+
+md \data\
+
+md \data\db
+
+db.names.insert({'name':'Rodrigo Andrade'});
+
+db.names.find()
+
+use video
+
+db.movies.insertOne({"title":"Jaws", "year":1975, "imdb":"tt0073195"})
+
+db.movies.findPretty()
+
+ var c = db.movies.find()
+ c.hasNext()
+ c.hasNext()
+ 
+mvn archetype:generate
+mvn clean compile exec:java -Dexec.mainClass=com.mongodb.App
+
+
+
+ 
