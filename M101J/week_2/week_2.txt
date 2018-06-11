@@ -1,0 +1,22 @@
+db.grades.aggregate([{'$group':{'_id':'$student_id', 'average':{$avg:'$score'}}}, {'$sort':{'average':-1}}, {'$limit':1}])
+
+{ "_id" : 164, "average" : 89.29771818263372 }
+
+*******************************************************************************************************************************
+
+db.grades.aggregate([{'$group':{'_id':'$student_id', 'score':{$gte:65}}}, {'$sort':{'score':-1}}, {'$limit':1}])
+
+db.grades.find( { score: { $gte: 65 } } )
+db.grades.find( { score: { $gte: 65 } } ).sort( { score: 1 } )
+
+*******************************************************************************************************************************
+
+db.grades.aggregate( { '$group' : { '_id' : '$student_id', 'average' : { $avg : '$score' } } }, { '$sort' : { 'average' : 1 } }, { '$limit' : 1 } )
+
+*******************************************************************************************************************************
+
+mongorestore dump
+
+mongoimport --drop -d students -c grades grades.json
+
+db.movieDetails.find({$and:[{year: { $eq: "2013" }},  {rated: { $eq: "PG-13" }}]}).pretty()
