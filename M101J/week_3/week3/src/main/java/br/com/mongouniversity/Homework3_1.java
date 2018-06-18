@@ -14,7 +14,7 @@ import com.mongodb.client.model.Filters;
  * 
  * @author rodrigo
  *
- * Homework 2.3, week 2 
+ * Homework 3.1, week 3 
  */
 public class Homework3_1 {
 	
