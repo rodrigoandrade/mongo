@@ -1,0 +1,11 @@
+// Get database M101
+var db = db.getSiblingDB('m101');
+
+// Finds the latency of the longest query.
+var cursor = db.sysprofile.find(
+    {ns: "school2.students" }, 
+    {_id: 0, millis: 1 } 
+)
+
+// Sorts the results descending and get the first result.
+cursor.sort( { millis: -1 } ).limit(1)

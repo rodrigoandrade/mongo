@@ -1,0 +1,17 @@
+// Get database BLOG.
+var db = db.getSiblingDB('blog');
+
+// Creates the index required.
+// Index on the date field used for the homepage which loads the most recent posts.
+db.posts.createIndex( {date : -1} );
+
+// Index on permalink field used for posts lookup.
+db.posts.createIndex( {permalink : 1} );
+
+// Compound index on tags and date used to lookup posts with a particular tag and sort them by date.
+db.posts.createIndex( 
+        {
+			tags : 1,
+			date : -1
+		}
+);

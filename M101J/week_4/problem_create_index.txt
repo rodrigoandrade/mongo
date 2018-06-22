@@ -1,0 +1,77 @@
+use school
+
+db.students.createIndex({"class":1, "student_name":1})
+db.students.getIndexes();
+
+db.students.dropIndex({class:1, student_name:1})
+db.students.getIndexes()
+
+db.students.dropIndex({student_id:1})
+
+db.foo.insert({a:1, b:2})
+db.foo.find()
+db.foo.createIndex({a:1, b:1})
+db.foo.explain().find({a:1, b:1})
+db.foo.insert({a:1, b:[3,5,7]})
+db.foo.explain().find({a:1, b:1})
+db.foo.find({a:1, b:1})
+db.foo.insert({a:[3,4,6], b:8})
+
+db.students.createIndex({'scores.score':1})
+db.students.explain().find({'scores.score':{'$gt':99}})
+db.students.find({'scores.score':{'$gt':99}}).pretty()
+db.students.explain().find({'scores':{'$elemMatch':{type:'exam', score:{'$gt':97}}}})
+db.students.find({'scores':{'$elemMatch':{type:'exam', score:{'$gt':97}}}}).pretty()
+db.students.find({'scores':{'$elemMatch':{type:'exam', score:{'$gt':97}}}}).count()
+db.students.explain(true).find({'scores.score':{'$gt':99}})
+
+
+db.students.find({'$and':[{'scores.type':'exam'}, {'scores.score':{'$gt':97}}]}).pretty()
+db.students.find({'$and':[{'scores.type':'exam'}, {'scores.score':{'$gt':97}}]}).count()
+
+
+db.people.createIndex({'work_history.company':-1})
+
+*******************************************************************************************
+
+db.stuff.drop()
+db.stuff.insert({'thing':'apple'})
+db.stuff.insert({'thing':'pear'})
+db.stuff.insert({'thing':'apple'})
+db.stuff.createIndex({'thing':1})
+db.stuff.dropIndex({'thing':1})
+db.stuff.remove({'thing':'apple'}, {justOne:true})
+db.stuff.createIndex({'thing':1}, {unique:true})
+
+db.students.createIndex({'student_id':1, 'class_id':1}, {unique:true})
+
+*******************************************************************************************
+
+db.employees.createIndex({cell:1}, {unique:true, sparse:true})
+db.employees.find().sort({'employee_id':1})
+
+db.students.createIndex({'scores.score':1}, {background:true})
+
+*******************************************************************************************
+
+db.places.find({'location':{'$near':[74, 140]}}).limit(3)
+db.stores.find({ loc:{ $near: { $geometry: { type: "Point", coordinates: [-130, 39]}, $maxDistance:1000000 } } })
+
+*******************************************************************************************
+
+db.setences.find({'$text':{'$search':'dog'}})
+
+Selectivity is the primary factor that determines how efficiently an index can be used. 
+Ideally, the index enables us to select only those records required to complete the result set, 
+without the need to scan a substantially larger number of index keys (or documents) in order to complete the query. 
+Selectivity determines how many records any subsequent operations must work with. Fewer records means less execution time.
+
+db.system.profile.find( { millis : { $gt:1000 } } ).sort( { ts : -1 } )
+
+
+
+
+
+
+
+
