@@ -1,0 +1,44 @@
+
+var db = db.getSiblingDB('test');
+
+// Calculates the highest average class.
+var cursor = db.grades.aggregate( 
+
+        // Unwinds the scores.
+		{ $unwind : "$scores" },
+        
+		// Gets only the homeworks and exams scores.
+		{ $match : { "scores.type" : { $ne : "quiz" } } },
+        
+		// Calculates the average of each student.
+		{ $group : 
+		    { 
+		        _id : 
+		            { 
+		                student_id : "$student_id", 
+		                class_id : "$class_id" 
+		            }, 
+		        avg : { $avg : "$scores.score" } 
+		    } 
+		},
+		
+		// Calculates the class average.
+        { $group : 
+		    { 
+		        _id : "$_id.class_id",
+		        avg : { $avg : "$avg" } 
+		    } 
+		},
+		
+		// Sorts the averages desc.
+        { $sort : { "avg" : -1 } },
+        
+		// Gets only the first result.
+		{ $limit : 1 } 
+);
+
+// Prints the result.
+print("Solution : ");
+while (cursor.hasNext()) {
+   printjson(cursor.next());
+}

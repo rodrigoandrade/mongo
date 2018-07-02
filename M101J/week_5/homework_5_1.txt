@@ -1,0 +1,28 @@
+// Conect dababase 'blog'
+var db = db.getSiblingDB('blog');
+
+// Finds the author with the major number of comments.
+var cursor = db.posts.aggregate(
+	// Unwinds the comments.
+    { $unwind : "$comments"},
+	
+	// Sums the comments for author.
+	{ $group : 
+	    {
+		    _id : "$comments.author",
+			num_comments : { $sum : 1 }
+		}
+	},
+	
+	// Sorts them desc.
+	{ $sort : { num_comments : -1 } },
+	
+	// Gets only the first result.
+	{ $limit : 1 }
+);
+
+// Prints the result.
+print("Solution : ");
+while (cursor.hasNext()) {
+   printjson(cursor.next());
+}

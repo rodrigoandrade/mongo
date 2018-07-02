@@ -1,0 +1,203 @@
+mongo --eval "load('products__m101.js')"
+
+SIMPLE AGGREGATION
+
+use agg
+db.products.aggregate([
+    {$group:
+     {
+	 _id:"$manufacturer", 
+	 num_products:{$sum:1}
+     }
+    }
+])
+
+*******************************************
+
+use agg
+db.products.aggregate([
+    {$group:
+     {
+	 _id: {
+	     "manufacturer":"$manufacturer", 
+	     "category" : "$category"},
+	 num_products:{$sum:1}
+     }
+    }
+])
+
+
+use agg
+db.products.aggregate([
+    {$group:
+     {
+	 _id: {'manufacturer':"$manufacturer"},
+	 num_products:{$sum:1}
+     }
+    }
+])
+
+*********************************************
+
+USING $sum
+
+mongoimport --drop -d zips -c zips zips.json
+
+use agg;
+db.zips.aggregate([{"$group":{"_id":"$state", "population":{$sum:"$pop"}}}])
+
+use agg
+db.products.aggregate([
+    {$group:
+     {
+	 _id: {
+	     "maker":"$manufacturer"
+	 },
+	 sum_prices:{$sum:"$price"}
+     }
+    }
+])
+
+
+**************************************************
+
+USING $avg
+
+mongoimport --drop -d zips -c zips zips_using_avg.json
+
+use agg
+db.products.aggregate([
+    {$group:
+     {
+	 _id: {
+	     "category":"$category"
+	 },
+	 avg_price:{$avg:"$price"}
+     }
+    }
+])
+
+
+***************************************************
+
+USING $addToSet
+
+mongoimport --drop -d zips -c zips zips_using_add_to_set.json
+
+use agg
+db.products.aggregate([
+    {$group:
+     {
+	 _id: {
+	     "maker":"$manufacturer"
+	 },
+	 categories:{$addToSet:"$category"}
+     }
+    }
+])
+
+
+**************************************************
+
+db.zips.aggregate([{"$group":{"_id":"$city", "postal_codes":{"$addToSet":"$_id"}}}])
+
+
+
+**************************************************
+
+USING $push
+
+db.zips.aggregate([{"$group":{"_id":"$city", "postal_codes":{"$push":"$_id"}}}])
+
+
+
+
+**************************************************
+
+USING $max and $min
+
+db.zips.aggregate([{$group:{"_id":"$state", pop:{$max:"$pop"}}}])
+
+
+*************************************************
+
+USING $group stages
+
+db.fun.find()
+{ "_id" : 0, "a" : 0, "b" : 0, "c" : 21 }
+{ "_id" : 1, "a" : 0, "b" : 0, "c" : 54 }
+{ "_id" : 2, "a" : 0, "b" : 1, "c" : 52 }
+{ "_id" : 3, "a" : 0, "b" : 1, "c" : 17 }
+{ "_id" : 4, "a" : 1, "b" : 0, "c" : 22 }
+{ "_id" : 5, "a" : 1, "b" : 0, "c" : 5 }
+{ "_id" : 6, "a" : 1, "b" : 1, "c" : 87 }
+{ "_id" : 7, "a" : 1, "b" : 1, "c" : 97 }
+
+db.fun.aggregate([{$group:{_id:{a:"$a", b:"$b"}, c:{$max:"$c"}}}, {$group:{_id:"$_id.a", c:{$min:"$c"}}}])
+
+
+**************************************************
+
+USING $match
+
+db.zips.aggregate([{$match:{pop:{$gt:100000}}}])
+
+
+**************************************************
+
+USING $project
+
+Write an aggregation query with a single projection stage that will transform the documents in the zips collection from this:
+{
+    "city" : "ACMAR",
+    "loc" : [
+        -86.51557,
+        33.584132
+    ],
+    "pop" : 6055,
+    "state" : "AL",
+    "_id" : "35004"
+}
+
+
+to documents in the result set that look like this:
+{
+    "city" : "acmar",
+    "pop" : 6055,
+    "state" : "AL",
+    "zip" : "35004"
+}
+
+db.zips.aggregate([{$project:{_id:0, city:{$toLower:"$city"}, pop:1, state:1, zip:"$_id"}}])
+
+
+************************************************
+
+USING $sort
+
+Again, considering the zipcode collection, which has documents that look like this,
+
+{
+    "city" : "ACMAR",
+    "loc" : [
+        -86.51557,
+        33.584132
+    ],
+    "pop" : 6055,
+    "state" : "AL",
+    "_id" : "35004"
+}
+
+Write an aggregation query with just a sort stage to sort by (state, city), both ascending. Assume the collection is called zips.
+
+db.zips.aggregate([{$sort:{state:1, city:1}}])
+
+
+**************************************************
+
+MANUAL REFERENCE
+
+https://docs.mongodb.com/manual/reference/sql-aggregation-comparison/
+
+
+**************************************************
